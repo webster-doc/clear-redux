@@ -1,0 +1,1 @@
+export { useTypeSelector } from './useTypedSelector'

@@ -1,24 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {ChangeEventHandler, useState} from 'react';
 import './App.css';
+import { useTypeSelector } from "./store/hooks/useTypedSelector"
+import { useTodoActions } from "./store/hooks/useTypedActions/useTodoActions";
+import { getTodosSelector } from "./store/reducers/todoReducer/selector";
+
 
 function App() {
+  const [todoText, setTodoText] = useState('')
+  const todos = useTypeSelector(getTodosSelector)
+  const todoActions = useTodoActions()
+  const inputChangeHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setTodoText(e.target.value)
+  }
+  const submitHandler = () => {
+    todoActions.addTodo({text: todoText})
+    setTodoText('')
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input type="text" value={todoText} onChange={inputChangeHandler} />
+      <button onClick={submitHandler} >
+        Добавить
+      </button>
+
+      {todos.map(({text, id}) => (<div key={id} >
+        {text} <button onClick={() => todoActions.deleteTodo({ id })} >x</button>
+      </div>))}
     </div>
   );
 }
